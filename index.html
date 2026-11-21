@@ -1,0 +1,183 @@
+let current = 0;
+let stage = 0;
+let answers = {};
+let shuffled = {};
+
+function shuffleWithKey(arr, correctIndex) {
+  const items = arr.map((value, index) => ({
+    value,
+    correct: index === correctIndex
+  }));
+
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+
+  return {
+    items: items.map(item => item.value),
+    correct: items.findIndex(item => item.correct)
+  };
+}
+
+function startCase(i) {
+  current = i;
+  stage = 0;
+  answers = {};
+
+  const c = cases[i];
+
+  // Acak diagnosis dan terapi secara terpisah
+  shuffled = {
+    dx: shuffleWithKey(c.d, c.di),
+    tx: shuffleWithKey(c.t, c.ti)
+  };
+
+  hideAll();
+
+  document.getElementById("simulation").classList.remove("hidden");
+  document.getElementById("caseTag").textContent = "KASUS " + (i + 1);
+  document.getElementById("caseTitle").textContent = "Kasus " + (i + 1);
+
+  document.getElementById("patient").innerHTML = `
+    <b>${c.sex}, ${c.age} tahun</b><br>
+    Keluhan utama: ${c.complaint}
+  `;
+
+  render();
+}
+
+function options(arr, key) {
+  return arr.map((item, i) => `
+    <label class="option">
+      <input
+        type="radio"
+        name="${key}"
+        value="${i}"
+        ${answers[key] === i ? "checked" : ""}
+        onchange="answers['${key}'] = Number(this.value)"
+      >
+      <span>${String.fromCharCode(65 + i)}. ${item}</span>
+    </label>
+  `).join("");
+}
+
+function render() {
+  const c = cases[current];
+  const box = document.getElementById("stageContent");
+
+  document.querySelectorAll(".tabs button").forEach((button, i) => {
+    button.classList.toggle("active", i === stage);
+  });
+
+  document.getElementById("nextBtn").textContent =
+    stage === 4 ? "Selesaikan kasus" : "Lanjut →";
+
+  if (stage === 0) {
+    box.innerHTML = `
+      <h3>Anamnesis</h3>
+      <p>Buka informasi anamnesis pasien.</p>
+      ${dataRows(c.a, "a")}
+    `;
+  }
+
+  if (stage === 1) {
+    box.innerHTML = `
+      <h3>Pemeriksaan fisik</h3>
+      <p>Buka temuan pemeriksaan fisik.</p>
+      ${dataRows(c.p, "p")}
+    `;
+  }
+
+  if (stage === 2) {
+    box.innerHTML = `
+      <h3>Pemeriksaan penunjang</h3>
+      <p>Buka hasil pemeriksaan penunjang.</p>
+      ${dataRows(c.l, "l")}
+    `;
+  }
+
+  if (stage === 3) {
+    box.innerHTML = `
+      <h3>Diagnosis paling mungkin</h3>
+      ${options(shuffled.dx.items, "dx")}
+    `;
+  }
+
+  if (stage === 4) {
+    box.innerHTML = `
+      <h3>Prinsip tata laksana</h3>
+      ${options(shuffled.tx.items, "tx")}
+    `;
+  }
+}
+
+function setStage(n) {
+  if (n > stage) {
+    alert("Gunakan tombol Lanjut untuk menyelesaikan tahapan.");
+    return;
+  }
+
+  stage = n;
+  render();
+}
+
+function next() {
+  if (stage === 3 && answers.dx === undefined) {
+    alert("Pilih diagnosis terlebih dahulu.");
+    return;
+  }
+
+  if (stage < 4) {
+    stage++;
+    render();
+    return;
+  }
+
+  finish();
+}
+
+function previous() {
+  if (stage > 0) {
+    stage--;
+    render();
+  } else {
+    showCases();
+  }
+}
+
+function finish() {
+  if (answers.tx === undefined) {
+    alert("Pilih tata laksana terlebih dahulu.");
+    return;
+  }
+
+  const c = cases[current];
+
+  const dxCorrect = answers.dx === shuffled.dx.correct;
+  const txCorrect = answers.tx === shuffled.tx.correct;
+
+  hideAll();
+  document.getElementById("result").classList.remove("hidden");
+
+  document.getElementById("score").textContent =
+    ((dxCorrect ? 50 : 0) + (txCorrect ? 50 : 0)) + "/100";
+
+  document.getElementById("corrections").innerHTML = `
+    <div class="review ${dxCorrect ? "good" : "bad"}">
+      <h3>Diagnosis</h3>
+      <p>Jawaban kamu: ${shuffled.dx.items[answers.dx]}</p>
+      <p>Kunci: ${shuffled.dx.items[shuffled.dx.correct]}</p>
+      <b>${dxCorrect ? "Benar" : "Belum tepat"}</b>
+    </div>
+
+    <div class="review ${txCorrect ? "good" : "bad"}">
+      <h3>Tata laksana</h3>
+      <p>Jawaban kamu: ${shuffled.tx.items[answers.tx]}</p>
+      <p>Kunci: ${shuffled.tx.items[shuffled.tx.correct]}</p>
+      <b>${txCorrect ? "Benar" : "Belum tepat"}</b>
+    </div>
+  `;
+
+  document.getElementById("discussion").textContent = c.ex;
+}
