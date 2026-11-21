@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEPHRO CASE | Simulasi Klinis Nefrologi</title>
+<style>
+:root {
+  --navy:#142d42;
+  --teal:#159b91;
+  --bg:#f3f7f9;
+  --white:#ffffff;
+  --text:#233746;
+  --muted:#718391;
+  --line:#e1e9ed;
+  --soft:#e9f6f4;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header {
+  background:var(--navy);
+  color:white;
+  padding:22px 6%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+.logo {font-size:23px;font-weight:800;letter-spacing:2px}
+.logo span {color:#52d0c1}
+header small {color:#c6d7e0}
+.container {max-width:1100px;margin:30px auto;padding:0 18px}
+.hero {
+  background:linear-gradient(120deg,#142d42,#24566b);
+  color:white;
+  border-radius:20px;
+  padding:35px;
+  margin-bottom:25px;
+}
+.hero h1 {font-size:clamp(27px,5vw,42px);margin:8px 0}
+.hero p {color:#d4e5eb;max-width:650px;line-height:1.7}
+.btn {
+  border:0;border-radius:10px;padding:12px 18px;
+  cursor:pointer;font-weight:bold;font-size:14px;
+}
+.primary {background:var(--teal);color:white}
+.secondary {background:#eaf1f4;color:var(--navy)}
+.card {
+  background:white;border:1px solid var(--line);
+  border-radius:16px;padding:20px;margin-bottom:16px;
+}
+.grid {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+}
+.case {
+  text-align:left;width:100%;background:white;
+  border:1px solid var(--line);border-radius:14px;
+  padding:17px;cursor:pointer;color:var(--text);
+}
+.case:hover {border-color:var(--teal);transform:translateY(-2px)}
+.case .number {color:var(--teal);font-size:12px;font-weight:bold}
+.case h3 {margin:8px 0}
+.case p {font-size:13px;color:var(--muted);line-height:1.5}
+.tag {
+  display:inline-block;background:var(--soft);color:#147e75;
+  border-radius:20px;padding:5px 9px;font-size:11px;
+}
+.hidden {display:none!important}
+.section-title {font-size:23px;margin:8px 0 18px}
+.patient {
+  display:flex;gap:15px;align-items:center;
+  background:#f7fafb;border-radius:13px;padding:15px;
+}
+.avatar {
+  width:55px;height:55px;border-radius:14px;
+  background:#dff2ef;display:grid;place-items:center;font-size:27px;
+}
+.tabs {display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}
+.tabs button {
+  border:0;border-radius:9px;padding:10px 12px;
+  background:#eaf0f3;color:#526979;cursor:pointer;
+}
+.tabs button.active {background:var(--navy);color:white}
+.option {
+  display:flex;gap:10px;align-items:flex-start;
+  border:1px solid var(--line);border-radius:11px;
+  padding:13px;margin:9px 0;cursor:pointer;
+}
+.option:hover {border-color:var(--teal)}
+.option input {margin-top:4px;accent-color:var(--teal)}
+.answer {
+  background:#eff8f6;border-left:4px solid var(--teal);
+  padding:12px;border-radius:8px;margin-top:10px;
+  font-size:14px;line-height:1.6;
+}
+.lab {
+  display:flex;justify-content:space-between;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--line);
+}
+.lab:last-child {border:0}
+.muted {color:var(--muted);font-size:13px}
+.actions {display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+.score {font-size:36px;color:var(--teal);font-weight:800}
+footer {text-align:center;padding:25px;color:var(--muted);font-size:12px}
+@media(max-width:600px) {
+  header {padding:18px;align-items:flex-start;flex-direction:column}
+  .hero {padding:24px}
+  .container {margin:18px auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">NEPHRO <span>CASE</span></div>
+    <small>Simulasi Klinis Nefrologi</small>
+  </div>
+  <span class="tag">MEDIA PEMBELAJARAN</span>
+</header>
+
+<main class="container">
+
+<!-- HALAMAN UTAMA -->
+<section id="home">
+  <div class="hero">
+    <span class="tag">CLINICAL CASE SIMULATOR</span>
+    <h1>Berpikir seperti klinisi.</h1>
+    <p>
+      Pelajari nefrologi melalui simulasi pasien.
+      Lakukan anamnesis, pilih pemeriksaan fisik,
+      interpretasikan hasil laboratorium, dan tentukan
+      diagnosis berdasarkan data klinis.
+    </p>
+    <button class="btn primary" onclick="showCases()">
+      Mulai simulasi →
+    </button>
+  </div>
+
+  <h2 class="section-title">Kategori kasus</h2>
+  <div class="grid">
+    <div class="card"><span class="tag">04 KASUS</span><h3>Glomerulus</h3><p class="muted">Gangguan glomerulus dan sindrom ginjal.</p></div>
+    <div class="card"><span class="tag">04 KASUS</span><h3>Fungsi Ginjal</h3><p class="muted">Gangguan akut dan kronik fungsi ginjal.</p></div>
+    <div class="card"><span class="tag">04 KASUS</span><h3>Elektrolit</h3><p class="muted">Gangguan cairan, natrium, kalium, dan asam basa.</p></div>
+    <div class="card"><span class="tag">03 KASUS</span><h3>Saluran Kemih</h3><p class="muted">Infeksi dan gangguan saluran kemih.</p></div>
+    <div class="card"><span class="tag">05 KASUS</span><h3>Nefrologi Khusus</h3><p class="muted">Penyakit ginjal dengan kondisi klinis khusus.</p></div>
+  </div>
+</section>
+
+<!-- DAFTAR KASUS -->
+<section id="caseList" class="hidden">
+  <button class="btn secondary" onclick="goHome()">← Kembali</button>
+  <h2 class="section-title">Pilih kasus klinis</h2>
+  <div class="grid" id="caseGrid"></div>
+</section>
+
+<!-- SIMULASI -->
+<section id="simulation" class="hidden">
+  <button class="btn secondary" onclick="showCases()">← Daftar kasus</button>
+  <div class="card" style="margin-top:15px">
+    <span class="tag">KASUS 01 · GLOMERULUS</span>
+    <h2>Wajah membengkak dan urine berwarna gelap</h2>
+    <div class="patient">
+      <div class="avatar">🧑🏻</div>
+      <div>
+        <b>Pasien laki-laki, 24 tahun</b>
+        <div class="muted">Keluhan utama: pembengkakan pada wajah.</div>
+      </div>
+    </div>
+    <p class="muted">
+      Anda bertugas mengevaluasi pasien. Pilih informasi
+      dan pemeriksaan yang diperlukan sebelum menentukan diagnosis.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="active" onclick="stage(0)">1. Anamnesis</button>
+      <button onclick="stage(1)">2. Pemeriksaan fisik</button>
+      <button onclick="stage(2)">3. Laboratorium</button>
+      <button onclick="stage(3)">4. Diagnosis</button>
+      <button onclick="stage(4)">5. Tata laksana</button>
+    </div>
+    <div id="stageContent"></div>
+    <div class="actions">
+      <button class="btn secondary" onclick="previous()">← Sebelumnya</button>
+      <button class="btn primary" id="next" onclick="next()">Lanjut →</button>
+    </div>
+  </div>
+</section>
+
+<!-- HASIL -->
+<section id="result" class="hidden">
+  <div class="card">
+    <span class="tag">SIMULASI SELESAI</span>
+    <h2>Hasil evaluasi klinis</h2>
+    <div class="score" id="score">0</div>
+    <p class="muted">Skor pembelajaran</p>
+    <div class="answer">
+      <b>Diagnosis yang paling sesuai dengan skenario:</b><br>
+      Glomerulonefritis akut pascainfeksi, dengan gambaran sindrom nefritik akut.
+    </div>
+    <h3>Pembahasan klinis</h3>
+    <p>
+      Edema, hipertensi, urine berwarna kecokelatan,
+      hematuria glomerular, dan penurunan fungsi ginjal
+      menunjukkan pola sindrom nefritik akut.
+      Riwayat infeksi tenggorokan sebelumnya mendukung
+      kemungkinan glomerulonefritis pascainfeksi.
+    </p>
+    <p>
+      Evaluasi lanjutan dapat mencakup C3 dan C4,
+      bukti infeksi streptokokus sebelumnya seperti ASO
+      atau anti-DNase B, kuantifikasi proteinuria,
+      serta pemantauan fungsi ginjal.
+    </p>
+    <h3>Referensi awal</h3>
+    <ul class="muted">
+      <li>KDIGO Clinical Practice Guideline for the Management of Glomerular Diseases (2021).</li>
+      <li>KDIGO Clinical Practice Guideline for Acute Kidney Injury (2012).</li>
+    </ul>
+    <p class="muted">
+      Skenario ini bersifat fiktif dan digunakan untuk pendidikan,
+      bukan sebagai panduan tata laksana pasien nyata.
+    </p>
+    <button class="btn primary" onclick="location.reload()">Kembali ke awal</button>
+  </div>
+</section>
+
+</main>
+<footer>NEPHRO CASE · Simulasi pembelajaran nefrologi</footer>
+
+<script>
+const cases = [
+["Glomerulonefritis akut pascainfeksi","Glomerulus"],
+["Sindrom nefrotik","Glomerulus"],
+["Nefropati IgA","Glomerulus"],
+["Lupus nefritis","Glomerulus"],
+["Cedera ginjal akut prarenal","Fungsi ginjal"],
+["Cedera ginjal akut intrinsik","Fungsi ginjal"],
+["Penyakit ginjal kronik","Fungsi ginjal"],
+["Cedera ginjal akut pada penyakit ginjal kronik","Fungsi ginjal"],
+["Hiponatremia","Elektrolit"],
+["Hipernatremia","Elektrolit"],
+["Hiperkalemia","Elektrolit"],
+["Asidosis metabolik","Elektrolit"],
+["Infeksi saluran kemih","Saluran kemih"],
+["Pielonefritis akut","Saluran kemih"],
+["Nefrolitiasis","Saluran kemih"],
+["Nefropati diabetik","Nefrologi khusus"],
+["Nefritis interstisial akut","Nefrologi khusus"],
+["Sindrom hepatorenal","Nefrologi khusus"],
+["Nefropati akibat obat","Nefrologi khusus"],
+["Hipertensi sekunder akibat penyakit ginjal","Nefrologi khusus"]
+];
+
+let currentStage=0, points=0;
+let answers={};
+
+function hideAll(){
+ ["home","caseList","simulation","result"].forEach(id=>
+ document.getElementById(id).classList.add("hidden"));
+}
+function goHome(){hideAll();document.getElementById("home").classList.remove("hidden")}
+function showCases(){
+ hideAll();
+ document.getElementById("caseList").classList.remove("hidden");
+ document.getElementById("caseGrid").innerHTML=cases.map((c,i)=>`
+ <button class="case" onclick="${i===0?'startCase()':'comingSoon('+i+')'}">
+ <div class="number">KASUS ${String(i+1).padStart(2,"0")}</div>
+ <h3>${c[0]}</h3><span class="tag">${c[1]}</span>
+ <p>${i===0?"Tersedia · Mulai simulasi":"Materi dalam pengembangan"}</p>
+ </button>`).join("");
+}
+function comingSoon(i){alert("Kasus ini akan ditambahkan pada pengembangan berikutnya.")}
+function startCase(){
+ hideAll();
+ document.getElementById("simulation").classList.remove("hidden");
+ currentStage=0;points=0;answers={};renderStage();
+}
+const historyQuestions=[
+ ["Sejak kapan pembengkakan terjadi?","Pembengkakan mulai dirasakan sekitar tujuh hari yang lalu.",10],
+ ["Di bagian mana pembengkakan pertama kali muncul?","Awalnya di sekitar kedua mata, terutama saat bangun tidur.",10],
+ ["Bagaimana jumlah dan warna urine?","Jumlah urine berkurang dan warnanya tampak gelap seperti teh.",10],
+ ["Apakah ada riwayat infeksi sebelumnya?","Pasien mengalami nyeri tenggorokan sekitar dua minggu sebelumnya.",10],
+ ["Apakah ada sesak napas?","Pasien menyangkal sesak napas.",5],
+ ["Apakah ada riwayat penyakit ginjal sebelumnya?","Pasien menyangkal riwayat penyakit ginjal sebelumnya.",5],
+ ["Apakah mengonsumsi obat atau suplemen baru?","Pasien menyangkal konsumsi obat atau suplemen baru.",5]
+];
+const physical=[
+ ["Tekanan darah","158/96 mmHg — meningkat.",5],
+ ["Frekuensi nadi","92 kali per menit.",5],
+ ["Frekuensi napas dan suhu","20 kali per menit dan 36,8°C.",5],
+ ["Pemeriksaan edema","Edema periorbital dan edema pitting ringan pada kedua tungkai.",5],
+ ["Pemeriksaan paru","Tidak terdengar ronki pada kedua lapang paru.",5],
+ ["Pemeriksaan abdomen","Tidak ditemukan asites pada pemeriksaan awal.",5]
+];
+const labs=[
+ ["Ureum","68 mg/dL","Meningkat"],
+ ["Kreatinin serum","1,8 mg/dL","Meningkat; perlu dibandingkan dengan nilai dasar"],
+ ["Natrium","138 mmol/L","Dalam rentang umum"],
+ ["Kalium","5,0 mmol/L","Batas atas rentang umum"],
+ ["Urinalisis: darah","3+","Positif"],
+ ["Urinalisis: protein","2+","Positif"],
+ ["Sedimen urine","Eritrosit dismorfik dan silinder eritrosit","Mendukung sumber glomerular"],
+ ["Komplemen C3","Menurun","Dapat mendukung proses pascainfeksi"]
+];
+function renderStage(){
+ const box=document.getElementById("stageContent");
+ const tabs=document.querySelectorAll(".tabs button");
+ tabs.forEach((b,i)=>b.classList.toggle("active",i===currentStage));
+ document.getElementById("next").textContent=currentStage===4?"Selesaikan kasus":"Lanjut →";
+ if(currentStage===0) box.innerHTML="<h3>Anamnesis</h3><p class='muted'>Pilih pertanyaan untuk menggali riwayat pasien.</p>"+historyQuestions.map((q,i)=>option("q"+i,q[0],q[1],q[2])).join("");
+ if(currentStage===1) box.innerHTML="<h3>Pemeriksaan fisik</h3><p class='muted'>Pilih pemeriksaan yang ingin dilakukan.</p>"+physical.map((q,i)=>option("p"+i,q[0],q[1],q[2])).join("");
+ if(currentStage===2) box.innerHTML="<h3>Pemeriksaan penunjang</h3><p class='muted'>Pilih pemeriksaan yang diperlukan.</p>"+labs.map((q,i)=>option("l"+i,q[0],q[1]+" ("+q[2]+")",3)).join("");
+ if(currentStage===3) box.innerHTML="<h3>Diagnosis paling mungkin</h3>"+radioOptions("diagnosis",["Glomerulonefritis akut pascainfeksi","Sindrom nefrotik primer","Pielonefritis akut","Nefrolitiasis","Nefritis interstisial akut"],0);
+ if(currentStage===4) box.innerHTML="<h3>Prinsip tata laksana awal</h3>"+radioOptions("management",["Menilai status volume, memantau tekanan darah dan fungsi ginjal, serta menangani penyebab sesuai evaluasi klinis.","Memberikan antibiotik kepada semua pasien tanpa menilai bukti infeksi aktif.","Memberikan cairan intravena dalam jumlah besar tanpa menilai status volume.","Memulai imunosupresan dosis tinggi sebelum memastikan etiologi."],0);
+}
+function option(id,title,answer,score){
+ const checked=answers[id]?"checked":"";
+ return `<label class="option"><input type="checkbox" ${checked} onchange="toggleAnswer('${id}',this,${score})"><span><b>${title}</b><div id="ans-${id}" class="${checked?'answer':'hidden'}">${answer}</div></span></label>`;
+}
+function toggleAnswer(id,el,value){
+ answers[id]=el.checked;
+ const ans=document.getElementById("ans-"+id);
+ ans.classList.toggle("hidden",!el.checked);
+ ans.classList.toggle("answer",el.checked);
+ if(el.checked)points+=value;else points-=value;
+}
+function radioOptions(name,items,correct){
+ return items.map((x,i)=>`<label class="option"><input type="radio" name="${name}" value="${i}" ${answers[name]===i?"checked":""} onchange="choose('${name}',${i},${correct})"><span>${x}</span></label>`).join("")+
+ `<div id="${name}Feedback" class="answer">${answers[name]===undefined?"Pilih jawaban berdasarkan data pasien.":answers[name]===correct?"Pilihan tepat.":"Pilihan belum tepat. Tinjau kembali data klinis pasien."}</div>`;
+}
+function choose(name,value,correct){
+ if(answers[name]===correct)points-=15;
+ answers[name]=value;
+ if(value===correct)points+=15;
+ const f=document.getElementById(name+"Feedback");
+ f.textContent=value===correct?"Pilihan tepat.":"Pilihan belum tepat. Tinjau kembali data klinis pasien.";
+}
+function stage(n){currentStage=n;renderStage()}
+function next(){
+ if(currentStage<4){currentStage++;renderStage();return}
+ hideAll();document.getElementById("result").classList.remove("hidden");
+ document.getElementById("score").textContent=Math.max(0,Math.min(100,points))+"/100";
+}
+function previous(){if(currentStage>0){currentStage--;renderStage()}else showCases()}
+goHome();
+</script>
+</body>
+</html>
