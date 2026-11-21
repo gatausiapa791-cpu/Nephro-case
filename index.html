@@ -1,7 +1,1117 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEPHRO CASE</title>
+<style>
+:root {
+  --navy:#24456b;
+  --blue:#719bc5;
+  --pink:#e99ab8;
+  --bg:#f5f7fc;
+  --text:#293b50;
+  --line:#e2e9f1;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+header {
+  background:linear-gradient(110deg,var(--navy),var(--blue));
+  color:white;
+  padding:22px 6%;
+}
+.logo {
+  font-size:24px;
+  font-weight:800;
+  letter-spacing:2px;
+}
+.logo span {color:#ffc5d9}
+.container {
+  max-width:1050px;
+  margin:25px auto;
+  padding:0 16px;
+}
+.hero {
+  background:linear-gradient(120deg,var(--navy),var(--blue));
+  color:white;
+  border-radius:20px;
+  padding:30px;
+  margin-bottom:22px;
+}
+.hero p {line-height:1.7}
+.card {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:16px;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+button {
+  font:inherit;
+  cursor:pointer;
+}
+.btn {
+  border:0;
+  border-radius:10px;
+  padding:12px 17px;
+  font-weight:bold;
+}
+.primary {
+  background:var(--pink);
+  color:white;
+}
+.secondary {
+  background:#e8f0f8;
+  color:var(--navy);
+}
+.case {
+  width:100%;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:16px;
+  text-align:left;
+  color:var(--text);
+}
+.case:hover {border-color:var(--pink)}
+.tag {
+  display:inline-block;
+  background:#fff0f5;
+  color:#a84e76;
+  border-radius:20px;
+  padding:5px 10px;
+  font-size:12px;
+}
+.hidden {display:none!important}
+.patient {
+  background:#edf5fc;
+  padding:15px;
+  border-radius:12px;
+  margin:15px 0;
+  line-height:1.7;
+}
+.tabs {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:20px 0;
+}
+.tabs button {
+  border:0;
+  border-radius:9px;
+  padding:10px;
+  background:#eaf0f6;
+  color:#526979;
+}
+.tabs button.active {
+  background:var(--navy);
+  color:white;
+}
+.data {
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:13px;
+  margin:9px 0;
+}
+.data p {
+  line-height:1.65;
+  margin:8px 0 0;
+}
+.option {
+  display:flex;
+  gap:10px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:13px;
+  margin:9px 0;
+  line-height:1.5;
+}
+.option input {
+  margin-top:4px;
+  accent-color:var(--pink);
+}
+.actions {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:20px;
+}
+.score {
+  font-size:38px;
+  font-weight:bold;
+  color:#c96f96;
+}
+.review {
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  margin:12px 0;
+  line-height:1.6;
+}
+.good {border-left:4px solid #4b9b83}
+.bad {border-left:4px solid #d47791}
+.progress {
+  height:7px;
+  background:#e8eef5;
+  border-radius:8px;
+  overflow:hidden;
+}
+.progress span {
+  display:block;
+  height:100%;
+  background:var(--pink);
+  width:0;
+}
+footer {
+  text-align:center;
+  padding:25px;
+  color:#78899b;
+  font-size:12px;
+}
+@media(max-width:600px) {
+  .hero {padding:22px}
+  .tabs button {font-size:12px}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">NEPHRO <span>CASE</span></div>
+  <small>Clinical Case Simulator</small>
+</header>
+
+<main class="container">
+
+<section id="home">
+  <div class="hero">
+    <span class="tag">NEPHROLOGY LEARNING</span>
+    <h1>Berpikir seperti klinisi.</h1>
+    <p>
+      Latih penalaran klinis melalui 20 kasus nefrologi.
+      Pelajari anamnesis, pemeriksaan fisik, pemeriksaan
+      penunjang, diagnosis, dan tata laksana.
+    </p>
+    <button class="btn primary" onclick="showCases()">
+      Mulai simulasi →
+    </button>
+  </div>
+
+  <h2>Kategori kasus</h2>
+  <div class="grid" id="categories"></div>
+</section>
+
+<section id="caseList" class="hidden">
+  <button class="btn secondary" onclick="home()">← Kembali</button>
+  <h2 id="listTitle">Pilih kasus</h2>
+  <p>Diagnosis disembunyikan agar kamu dapat berlatih menalar kasus.</p>
+  <div class="grid" id="caseGrid"></div>
+</section>
+
+<section id="simulation" class="hidden">
+  <button class="btn secondary" onclick="showCases()">← Daftar kasus</button>
+
+  <div class="card">
+    <span class="tag" id="caseTag"></span>
+    <h2 id="caseTitle"></h2>
+    <div class="patient" id="patient"></div>
+    <div class="progress">
+      <span id="progressBar"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button onclick="setStage(0)">1. Anamnesis</button>
+      <button onclick="setStage(1)">2. Fisik</button>
+      <button onclick="setStage(2)">3. Penunjang</button>
+      <button onclick="setStage(3)">4. Diagnosis</button>
+      <button onclick="setStage(4)">5. Terapi</button>
+    </div>
+
+    <div id="stageContent"></div>
+
+    <div class="actions">
+      <button class="btn secondary" onclick="previous()">
+        ← Sebelumnya
+      </button>
+      <button class="btn primary" id="nextBtn" onclick="next()">
+        Lanjut →
+      </button>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="hidden">
+  <div class="card">
+    <span class="tag">HASIL SIMULASI</span>
+    <h2>Evaluasi kasus</h2>
+    <div class="score" id="score"></div>
+    <div id="corrections"></div>
+    <h3>Pembahasan klinis</h3>
+    <p id="discussion"></p>
+    <button class="btn primary" onclick="showCases()">
+      Pilih kasus lain
+    </button>
+  </div>
+</section>
+
+</main>
+
+<footer>NEPHRO CASE · Media pembelajaran nefrologi</footer>
+
+<script>
+const cases = [
+
+{
+name:"Glomerulonefritis pascastreptokokus",
+cat:"Glomerulus",
+age:24,sex:"Laki-laki",
+complaint:"Wajah bengkak dan urine gelap",
+a:[
+["Awal keluhan","Edema wajah muncul 5 hari lalu."],
+["Perubahan urine","Urine berkurang dan berwarna seperti teh."],
+["Gejala penyerta","Sakit kepala dan tungkai membengkak."],
+["Infeksi sebelumnya","Nyeri tenggorokan sekitar 2–3 minggu sebelum keluhan ginjal."]
+],
+p:[
+["Tekanan darah","158/96 mmHg."],
+["Edema","Edema periorbital dan pitting edema kedua tungkai."],
+["Paru","Tidak terdengar ronki; pantau tanda edema paru."],
+["Status volume","Kesan retensi cairan; nilai berat badan dan diuresis."]
+],
+l:[
+["Kreatinin","1,8 mg/dL."],
+["Ureum","68 mg/dL."],
+["Urinalisis","Darah 3+, protein 2+."],
+["Sedimen urine","Eritrosit dismorfik; silinder eritrosit dapat ditemukan."],
+["Komplemen dan serologi","C3 rendah; ASO/anti-DNase B dapat meningkat."]
+],
+d:[
+"Glomerulonefritis pascastreptokokus",
+"Sindrom nefrotik",
+"Nefropati IgA",
+"Pielonefritis akut"
+],
+di:0,
+t:[
+"Pembatasan natrium, pengaturan cairan sesuai status volume, kendali tekanan darah dan edema, pantau fungsi ginjal dan kalium; eradikasi streptokokus bila infeksi masih ada.",
+"Imunosupresi rutin untuk semua pasien tanpa indikasi.",
+"Bolus cairan besar meski terdapat overload.",
+"Antibiotik jangka panjang tanpa bukti infeksi aktif."
+],
+ti:0,
+ex:"Gambaran sindrom nefritik akut, C3 rendah, dan riwayat infeksi streptokokus 1–3 minggu sebelumnya mendukung glomerulonefritis pascastreptokokus. Tata laksana umumnya suportif. Antibiotik mengeradikasi infeksi streptokokus yang masih ada, tetapi tidak langsung membalikkan glomerulonefritis."
+},
+
+{
+name:"Sindrom nefrotik",
+cat:"Glomerulus",
+age:19,sex:"Perempuan",
+complaint:"Pembengkakan seluruh tubuh",
+a:[
+["Awal keluhan","Edema progresif selama 2 minggu."],
+["Perubahan urine","Urine tampak berbusa."],
+["Gejala penyerta","Berat badan meningkat dan perut membesar."],
+["Riwayat penyakit","Belum pernah didiagnosis penyakit ginjal."]
+],
+p:[
+["Tekanan darah","126/80 mmHg."],
+["Edema","Pitting edema bilateral hingga pretibial."],
+["Paru","Suara napas vesikuler; nilai efusi pleura bila dicurigai."],
+["Abdomen","Asites ringan."]
+],
+l:[
+["Albumin serum","2,0 g/dL."],
+["Protein urine","Rasio protein/kreatinin urine 4,2 g/g."],
+["Kreatinin","1,0 mg/dL."],
+["Lipid","Kolesterol total 285 mg/dL."],
+["Urinalisis","Protein 4+; sedimen tanpa silinder eritrosit."]
+],
+d:[
+"Sindrom nefrotik",
+"Glomerulonefritis akut",
+"Pielonefritis",
+"Nefrolitiasis"
+],
+di:0,
+t:[
+"Konfirmasi pola nefrotik dan evaluasi penyebab serta komplikasi; terapi edema dan proteinuria secara individual, pertimbangkan biopsi sesuai usia, konteks, dan respons terapi.",
+"Antibiotik rutin tanpa bukti infeksi.",
+"Diuretik agresif tanpa menilai perfusi dan status volume.",
+"Menghentikan evaluasi karena kreatinin normal."
+],
+ti:0,
+ex:"Proteinuria rentang nefrotik, hipoalbuminemia, edema, dan hiperlipidemia membentuk sindrom nefrotik. Kreatinin normal tidak menyingkirkan penyakit glomerulus. Etiologi menentukan kebutuhan biopsi dan terapi spesifik."
+},
+
+{
+name:"Nefropati IgA",
+cat:"Glomerulus",
+age:22,sex:"Laki-laki",
+complaint:"Urine kemerahan berulang",
+a:[
+["Awal keluhan","Hematuria tampak sejak kemarin."],
+["Waktu terhadap infeksi","Hematuria muncul bersamaan dengan infeksi saluran napas atas."],
+["Gejala penyerta","Batuk dan pilek ringan; tidak ada edema."],
+["Riwayat episode","Pernah mengalami episode serupa saat flu sebelumnya."]
+],
+p:[
+["Tekanan darah","132/84 mmHg."],
+["Edema","Tidak ditemukan edema."],
+["Pemeriksaan umum","Afebris, kondisi umum baik."],
+["Kulit","Tidak ditemukan purpura."]
+],
+l:[
+["Kreatinin","1,1 mg/dL."],
+["Urinalisis","Darah 3+, protein 1+."],
+["Sedimen","Eritrosit dismorfik."],
+["Komplemen","C3 dan C4 dalam batas normal."],
+["Protein urine","PCR 0,45 g/g."]
+],
+d:[
+"Nefropati IgA",
+"Glomerulonefritis pascastreptokokus",
+"Sindrom nefrotik",
+"Infeksi saluran kemih bawah"
+],
+di:0,
+t:[
+"Kuantifikasi dan pantau proteinuria serta eGFR, kendalikan tekanan darah dan faktor risiko; pertimbangkan biopsi serta terapi lanjutan menurut risiko progresi.",
+"Antibiotik untuk semua pasien tanpa bukti infeksi bakteri yang memerlukan terapi.",
+"Imunosupresi rutin tanpa stratifikasi risiko atau konfirmasi indikasi.",
+"Mengabaikan pemantauan proteinuria."
+],
+ti:0,
+ex:"Hematuria makroskopik yang muncul bersamaan atau dalam beberapa hari setelah infeksi mukosa dengan komplemen normal mendukung nefropati IgA. Diagnosis definitif umumnya memerlukan biopsi ginjal."
+},
+
+{
+name:"Lupus nefritis",
+cat:"Glomerulus",
+age:26,sex:"Perempuan",
+complaint:"Edema, nyeri sendi, dan ruam",
+a:[
+["Awal keluhan","Edema muncul selama 2 minggu."],
+["Perubahan urine","Urine berbusa dan sedikit berkurang."],
+["Gejala sistemik","Nyeri sendi dan ruam fotosensitif."],
+["Riwayat penyakit","Pernah mengalami sariawan berulang dan nyeri sendi."]
+],
+p:[
+["Tekanan darah","150/95 mmHg."],
+["Edema","Pitting edema kedua tungkai."],
+["Kulit dan sendi","Ruam malar/fotosensitif dan nyeri sendi."],
+["Pemeriksaan lain","Evaluasi serositis dan manifestasi lupus lain."]
+],
+l:[
+["Kreatinin","1,5 mg/dL."],
+["Urinalisis","Protein 3+, darah 2+."],
+["PCR urine","1,8 g/g."],
+["Imunologi","ANA positif, anti-dsDNA meningkat, C3/C4 rendah."],
+["Biopsi","Belum dilakukan; kelas lupus nefritis belum dapat ditetapkan."]
+],
+d:[
+"Lupus nefritis",
+"Nefropati IgA",
+"Glomerulonefritis pascastreptokokus",
+"Penyakit ginjal diabetik"
+],
+di:0,
+t:[
+"Evaluasi aktivitas SLE, proteinuria, eGFR dan sedimen; lakukan biopsi ginjal bila diindikasikan. Terapi ditentukan kelas histopatologi dan kondisi pasien bersama nefrologi/reumatologi.",
+"Antibiotik sebagai terapi utama tanpa bukti infeksi.",
+"Diuretik saja tanpa mengevaluasi aktivitas lupus.",
+"Menentukan regimen imunosupresi tanpa klasifikasi dan penilaian klinis."
+],
+ti:0,
+ex:"Manifestasi sistemik lupus, proteinuria, hematuria, penurunan fungsi ginjal, anti-dsDNA meningkat dan komplemen rendah meningkatkan kecurigaan lupus nefritis. Biopsi penting untuk menentukan kelas dan terapi."
+},
+
+{
+name:"AKI prarenal",
+cat:"Fungsi Ginjal",
+age:45,sex:"Laki-laki",
+complaint:"Urine berkurang setelah diare",
+a:[
+["Awal keluhan","Oliguria sejak 2 hari diare cair berulang."],
+["Gejala penyerta","Haus dan pusing saat berdiri."],
+["Asupan cairan","Minum berkurang karena mual."],
+["Riwayat ginjal","Kreatinin sebelumnya 0,9 mg/dL."]
+],
+p:[
+["Tekanan darah","100/65 mmHg; ortostatik dapat positif."],
+["Mukosa","Kering."],
+["Nadi","104 kali/menit."],
+["Perfusi","Pengisian kapiler 3 detik."]
+],
+l:[
+["Kreatinin","1,8 mg/dL; nilai dasar 0,9 mg/dL."],
+["Ureum","68 mg/dL."],
+["Urinalisis","Sedimen relatif bland."],
+["Elektrolit","Na 146, K 3,4 mmol/L."]
+],
+d:[
+"AKI prarenal akibat hipovolemia",
+"Nekrosis tubular akut",
+"Penyakit ginjal kronik",
+"AKI pascarenal"
+],
+di:0,
+t:[
+"Nilai hemodinamik dan kehilangan cairan; berikan kristaloid isotonic secara terukur dengan evaluasi berulang, pantau diuresis dan kreatinin serta hindari nefrotoksin.",
+"Diuretik dosis tinggi tanpa menilai volume.",
+"Membatasi cairan pada hipovolemia.",
+"Memberikan cairan tanpa pemantauan pada pasien berisiko overload."
+],
+ti:0,
+ex:"Diare, asupan rendah, mukosa kering, takikardia, dan peningkatan kreatinin akut mendukung AKI prarenal. Respons terhadap pemulihan perfusi membantu penilaian."
+},
+
+{
+name:"Nekrosis tubular akut",
+cat:"Fungsi Ginjal",
+age:52,sex:"Perempuan",
+complaint:"Oliguria setelah syok sepsis",
+a:[
+["Kronologi","Dirawat karena sepsis dengan hipotensi 48 jam lalu."],
+["Perubahan urine","Oliguria menetap meski hemodinamik telah diperbaiki."],
+["Paparan obat","Mendapat antibiotik; paparan nefrotoksin perlu ditinjau."],
+["Fungsi ginjal sebelumnya","Kreatinin dasar 0,8 mg/dL."]
+],
+p:[
+["Tekanan darah","Saat ini 110/70 mmHg."],
+["Perfusi","Sebelumnya terjadi hipotensi berkepanjangan."],
+["Paru","Ronki basal ringan; nilai status volume."],
+["Edema","Edema perifer ringan."]
+],
+l:[
+["Kreatinin","3,1 mg/dL dari dasar 0,8 mg/dL."],
+["Kalium","5,6 mmol/L."],
+["Sedimen urine","Silinder granular cokelat dapat ditemukan."],
+["Urinalisis","Protein dan darah ringan."]
+],
+d:[
+"Nekrosis tubular akut",
+"AKI prarenal murni",
+"Nefrolitiasis",
+"Sindrom nefrotik"
+],
+di:0,
+t:[
+"Atasi sepsis dan optimalkan perfusi, hentikan atau sesuaikan nefrotoksin, pantau cairan, diuresis dan elektrolit; dialisis bila ada indikasi klinis.",
+"Memberikan cairan tanpa batas meskipun overload.",
+"Memberikan diuretik untuk menyembuhkan cedera tubulus.",
+"Mengabaikan hiperkalemia."
+],
+ti:0,
+ex:"Sepsis dan hipotensi berkepanjangan dapat menyebabkan cedera tubulus akut. Silinder granular cokelat mendukung acute tubular injury. Dialisis ditentukan oleh komplikasi klinis."
+},
+
+{
+name:"Penyakit ginjal kronik",
+cat:"Fungsi Ginjal",
+age:58,sex:"Laki-laki",
+complaint:"Mudah lelah dan edema",
+a:[
+["Durasi keluhan","Mudah lelah dan gatal selama beberapa bulan."],
+["Perubahan urine","Nokturia."],
+["Gejala penyerta","Nafsu makan menurun."],
+["Riwayat penyakit","Hipertensi dan diabetes lebih dari 10 tahun."]
+],
+p:[
+["Tekanan darah","164/96 mmHg."],
+["Edema","Edema ringan kedua tungkai."],
+["Kulit","Ekskoriasi akibat pruritus."],
+["Pemeriksaan umum","Konjungtiva agak pucat."]
+],
+l:[
+["Kreatinin","2,4 mg/dL."],
+["eGFR","28 mL/menit/1,73 m²."],
+["Durasi","eGFR rendah terdokumentasi selama 5 bulan."],
+["Hemoglobin","10,5 g/dL."],
+["ACR urine","420 mg/g."]
+],
+d:[
+"Penyakit ginjal kronik G4 A3",
+"AKI prarenal",
+"Pielonefritis",
+"Nefrolitiasis"
+],
+di:0,
+t:[
+"Klasifikasikan penyebab, GFR dan albuminuria; kendalikan tekanan darah dan diabetes, evaluasi komplikasi, sesuaikan dosis obat dan pantau progresi.",
+"NSAID rutin untuk semua keluhan.",
+"Mengabaikan kontrol tekanan darah dan albuminuria.",
+"Menghentikan pemeriksaan karena kreatinin stabil."
+],
+ti:0,
+ex:"eGFR 28 termasuk G4 dan ACR 420 mg/g termasuk A3. Dokumentasi lebih dari 3 bulan memenuhi definisi CKD."
+},
+
+{
+name:"AKI pada CKD",
+cat:"Fungsi Ginjal",
+age:63,sex:"Perempuan",
+complaint:"Urine mendadak berkurang",
+a:[
+["Awal keluhan","Oliguria sejak 3 hari."],
+["Gejala penyerta","Mual dan nafsu makan menurun."],
+["Pencetus","Diare dan muntah selama 2 hari."],
+["Riwayat ginjal","CKD dengan kreatinin stabil 1,8 mg/dL."]
+],
+p:[
+["Tekanan darah","102/68 mmHg."],
+["Mukosa","Kering."],
+["Edema","Tidak tampak edema."],
+["Abdomen","Tidak teraba kandung kemih."]
+],
+l:[
+["Kreatinin saat ini","3,0 mg/dL dari dasar 1,8 mg/dL."],
+["Kalium","5,2 mmol/L."],
+["Bikarbonat","18 mmol/L."],
+["Urinalisis","Sedimen bland."],
+["USG ginjal","Tidak ada hidronefrosis."]
+],
+d:[
+"AKI pada CKD",
+"CKD stabil",
+"Sindrom nefrotik",
+"Pielonefritis"
+],
+di:0,
+t:[
+"Cari pencetus akut, nilai volume dan obstruksi, tinjau obat/nefrotoksin, koreksi hipovolemia terukur dan pantau elektrolit serta fungsi ginjal serial.",
+"Melanjutkan semua obat tanpa meninjau dosis dan nefrotoksisitas.",
+"Mengabaikan kenaikan kreatinin.",
+"Memberikan cairan tanpa penilaian status volume."
+],
+ti:0,
+ex:"Kreatinin meningkat akut pada pasien dengan CKD sebelumnya, sehingga mengarah pada AKI on CKD. Pencetus dan komplikasi harus segera dievaluasi."
+},
+
+{
+name:"Hiponatremia simptomatik",
+cat:"Elektrolit & Asam Basa",
+age:68,sex:"Perempuan",
+complaint:"Mual dan kebingungan",
+a:[
+["Awal keluhan","Kebingungan dan sakit kepala sejak 1 hari."],
+["Gejala penyerta","Mual tanpa muntah."],
+["Asupan cairan","Minum air sangat banyak dalam beberapa hari."],
+["Obat","Menggunakan tiazid untuk hipertensi."]
+],
+p:[
+["Kesadaran","Disorientasi ringan, GCS 14."],
+["Tekanan darah","128/78 mmHg."],
+["Status volume","Tidak tampak edema atau hipovolemia jelas."],
+["Neurologis","Tidak ada kejang saat pemeriksaan."]
+],
+l:[
+["Natrium","118 mmol/L."],
+["Osmolalitas serum","250 mOsm/kg."],
+["Glukosa","100 mg/dL."],
+["Osmolalitas urine","Belum diperiksa."],
+["Natrium urine","Belum diperiksa."]
+],
+d:[
+"Hiponatremia hipotonik simptomatik",
+"Hipernatremia",
+"Hiperkalemia",
+"Hipokalemia"
+],
+di:0,
+t:[
+"Nilai kegawatan neurologis dan durasi; pada gejala sedang-berat pertimbangkan NaCl 3% bolus sesuai protokol, periksa natrium serial dan batasi laju koreksi.",
+"Memberikan air bebas dalam jumlah besar.",
+"Mengoreksi natrium secepat mungkin tanpa pemeriksaan serial.",
+"Menunda penanganan gejala neurologis berat."
+],
+ti:0,
+ex:"Na 118 dengan osmolalitas serum rendah menunjukkan hiponatremia hipotonik. Kebingungan memerlukan penilaian segera. Hindari koreksi berlebihan yang berisiko menyebabkan demielinisasi osmotik."
+},
+
+{
+name:"Hiperkalemia",
+cat:"Elektrolit & Asam Basa",
+age:61,sex:"Laki-laki",
+complaint:"Lemas dan jantung berdebar",
+a:[
+["Awal keluhan","Lemas dan palpitasi sejak pagi."],
+["Gejala penyerta","Kelemahan otot."],
+["Riwayat penyakit","CKD stadium lanjut."],
+["Obat","ACE inhibitor dan suplemen kalium."]
+],
+p:[
+["Nadi","52 kali/menit."],
+["Tekanan darah","138/84 mmHg."],
+["Neurologis","Kelemahan otot ringan."],
+["Jantung","EKG segera dan monitor kontinu."]
+],
+l:[
+["Kalium","6,8 mmol/L pada sampel nonhemolisis."],
+["Kreatinin","2,6 mg/dL."],
+["EKG","Gelombang T tinggi runcing dan PR memanjang."],
+["Bikarbonat","18 mmol/L."]
+],
+d:[
+"Hiperkalemia dengan perubahan EKG",
+"Hipokalemia",
+"Hiponatremia",
+"Hiperkalsemia"
+],
+di:0,
+t:[
+"Tatalaksana emergensi: monitor EKG, berikan kalsium IV untuk stabilisasi membran bila ada perubahan EKG, terapi pemindahan K ke intrasel dan eliminasi K.",
+"Memberikan suplemen kalium.",
+"Menunggu tanpa pemantauan EKG.",
+"Hanya menghentikan ACE inhibitor tanpa menangani kegawatan."
+],
+ti:0,
+ex:"K 6,8 mmol/L disertai perubahan EKG merupakan kegawatan. Kalsium IV menstabilkan membran tetapi tidak menurunkan kalium. Terapi pemindahan dan eliminasi kalium juga diperlukan."
+},
+
+{
+name:"Hipokalemia",
+cat:"Elektrolit & Asam Basa",
+age:57,sex:"Perempuan",
+complaint:"Kram dan kelemahan otot",
+a:[
+["Awal keluhan","Kram otot selama 3 hari."],
+["Gejala penyerta","Kelemahan tungkai dan palpitasi."],
+["Kehilangan cairan","Diare selama beberapa hari."],
+["Obat","Menggunakan furosemid."]
+],
+p:[
+["Tekanan darah","110/72 mmHg."],
+["Otot","Kelemahan ekstremitas."],
+["Refleks","Refleks tendon menurun ringan."],
+["Jantung","EKG menunjukkan gelombang U dan T mendatar."]
+],
+l:[
+["Kalium","2,6 mmol/L."],
+["Magnesium","1,4 mg/dL."],
+["Kreatinin","0,9 mg/dL."],
+["Bikarbonat","30 mmol/L."]
+],
+d:[
+"Hipokalemia",
+"Hiperkalemia",
+"Hiponatremia",
+"Asidosis metabolik"
+],
+di:0,
+t:[
+"Nilai gejala dan EKG, koreksi kalium sesuai tingkat keparahan dan rute yang aman, koreksi magnesium serta atasi kehilangan kalium; pantau ulang elektrolit.",
+"Memberikan kalium tanpa mempertimbangkan fungsi ginjal atau pemantauan.",
+"Menghentikan pemantauan elektrolit.",
+"Melanjutkan penyebab kehilangan kalium tanpa evaluasi."
+],
+ti:0,
+ex:"K 2,6 mmol/L menunjukkan hipokalemia. Hipomagnesemia dapat menyebabkan hipokalemia sulit terkoreksi sehingga perlu ditangani."
+},
+
+{
+name:"Asidosis metabolik",
+cat:"Elektrolit & Asam Basa",
+age:54,sex:"Perempuan",
+complaint:"Napas cepat dan lemas",
+a:[
+["Awal keluhan","Napas cepat sejak 1 hari."],
+["Gejala penyerta","Mual, lemas, nafsu makan turun."],
+["Riwayat penyakit","Diabetes dan CKD."],
+["Kehilangan cairan","Tidak ada diare berat."]
+],
+p:[
+["Pernapasan","Napas cepat dan dalam."],
+["Tekanan darah","110/70 mmHg."],
+["Kesadaran","Sadar, tampak lemas."],
+["Perfusi","Tidak ada tanda syok nyata."]
+],
+l:[
+["pH","7,25."],
+["HCO3","12 mmol/L."],
+["PaCO2","28 mmHg."],
+["Na/K/Cl","140/4,8/104 mmol/L."],
+["Anion gap","24 mmol/L."]
+],
+d:[
+"Asidosis metabolik anion gap tinggi",
+"Alkalosis metabolik",
+"Asidosis respiratorik primer",
+"Alkalosis respiratorik primer"
+],
+di:0,
+t:[
+"Konfirmasi gangguan dan kompensasi, hitung anion gap serta evaluasi laktat, keton, uremia atau toksin sesuai konteks; tata laksana penyebab dan komplikasi.",
+"Memberikan bikarbonat dosis tinggi kepada semua pasien tanpa evaluasi.",
+"Mengabaikan penyebab dasar.",
+"Menilai hanya frekuensi napas tanpa analisis gas darah."
+],
+ti:0,
+ex:"pH rendah dan HCO3 rendah menunjukkan asidosis metabolik. Anion gap meningkat. PaCO2 28 mmHg sesuai perkiraan kompensasi rumus Winter sekitar 26 ± 2 mmHg."
+},
+
+{
+name:"Pielonefritis akut",
+cat:"Saluran Kemih",
+age:31,sex:"Perempuan",
+complaint:"Demam dan nyeri pinggang",
+a:[
+["Awal keluhan","Demam 3 hari."],
+["Gejala kemih","Disuria dan frekuensi meningkat."],
+["Gejala penyerta","Menggigil, mual, nyeri pinggang kanan."],
+["Riwayat ISK","Pernah mengalami ISK sebelumnya."]
+],
+p:[
+["Suhu","39°C."],
+["Tekanan darah","112/72 mmHg."],
+["Nyeri ketok CVA","Positif kanan."],
+["Abdomen","Nyeri suprapubik ringan."]
+],
+l:[
+["Darah lengkap","Leukosit 15.000/µL."],
+["Urinalisis","Leukosit esterase positif, nitrit positif, piuria."],
+["Kultur urine","Diambil sebelum antibiotik; hasil menunggu."],
+["Kreatinin","0,9 mg/dL."],
+["Tes kehamilan","Negatif."]
+],
+d:[
+"Pielonefritis akut",
+"Sistitis sederhana",
+"Nefrolitiasis tanpa infeksi",
+"Sindrom nefrotik"
+],
+di:0,
+t:[
+"Ambil kultur urine, nilai sepsis dan obstruksi, mulai antibiotik empiris sesuai pola resistensi lokal lalu sesuaikan kultur; rawat inap bila kondisi berat.",
+"Analgesik saja tanpa evaluasi infeksi ginjal.",
+"Mengabaikan demam dan tanda sepsis.",
+"Terapi batu ginjal sebagai terapi utama tanpa bukti batu."
+],
+ti:0,
+ex:"Demam, menggigil, nyeri pinggang dan piuria mendukung pielonefritis. Kultur urine membantu penyesuaian antibiotik."
+},
+
+{
+name:"Nefrolitiasis",
+cat:"Saluran Kemih",
+age:38,sex:"Laki-laki",
+complaint:"Nyeri pinggang menjalar ke lipat paha",
+a:[
+["Karakter nyeri","Nyeri kolik hebat, hilang timbul, menjalar ke lipat paha kanan."],
+["Gejala penyerta","Mual dan muntah."],
+["Perubahan urine","Urine kemerahan."],
+["Riwayat batu","Pernah mengalami batu saluran kemih."]
+],
+p:[
+["Tekanan darah","142/88 mmHg."],
+["Nyeri","Nyeri pinggang kanan; pasien gelisah."],
+["Suhu","36,8°C."],
+["Abdomen","Tidak ada tanda peritonitis."]
+],
+l:[
+["Urinalisis","Hematuria; nitrit negatif."],
+["Kreatinin","1,0 mg/dL."],
+["USG","Hidronefrosis ringan kanan."],
+["CT nonkontras","Batu ureter distal kanan 5 mm."],
+["Kultur urine","Tidak ada pertumbuhan bila kultur dilakukan."]
+],
+d:[
+"Nefrolitiasis/ureterolitiasis kanan",
+"Pielonefritis akut",
+"Glomerulonefritis",
+"Sindrom nefrotik"
+],
+di:0,
+t:[
+"Nilai ukuran dan lokasi batu, fungsi ginjal, infeksi dan obstruksi; berikan analgesia yang sesuai, pertimbangkan terapi ekspulsif atau intervensi berdasarkan kondisi.",
+"Antibiotik untuk semua batu tanpa bukti infeksi.",
+"Mengabaikan obstruksi dan fungsi ginjal.",
+"Memaksa minum cairan berlebihan untuk mendorong batu."
+],
+ti:0,
+ex:"Nyeri kolik menjalar dan batu ureter pada CT mendukung ureterolitiasis. Demam atau sepsis dengan obstruksi merupakan kegawatan urologi."
+},
+
+{
+name:"Obstruksi saluran kemih",
+cat:"Saluran Kemih",
+age:70,sex:"Laki-laki",
+complaint:"Sulit berkemih dan urine berkurang",
+a:[
+["Pola berkemih","Pancaran melemah, hesitansi dan mengejan."],
+["Gejala penyerta","Rasa tidak tuntas dan nokturia."],
+["Durasi","Keluhan progresif beberapa bulan."],
+["Riwayat","Pernah didiagnosis pembesaran prostat."]
+],
+p:[
+["Abdomen","Kandung kemih teraba penuh."],
+["Tekanan darah","138/82 mmHg."],
+["Pinggang","Tidak ada nyeri ketok CVA."],
+["Pemeriksaan prostat","Pembesaran prostat."]
+],
+l:[
+["Kreatinin","2,2 mg/dL dari dasar 1,0 mg/dL."],
+["Kalium","5,1 mmol/L."],
+["Bladder scan","Residu pascamiksi 650 mL."],
+["USG","Hidronefrosis bilateral."],
+["Urinalisis","Tidak ada piuria bermakna."]
+],
+d:[
+"AKI pascarenal akibat obstruksi prostat",
+"AKI prarenal",
+"Sindrom nefrotik",
+"Nefropati IgA"
+],
+di:0,
+t:[
+"Dekompresi kandung kemih segera sesuai indikasi, pantau diuresis pascaobstruksi dan elektrolit, evaluasi fungsi ginjal serta rujuk urologi.",
+"Memberikan diuretik tanpa mengatasi obstruksi.",
+"Mengabaikan retensi urine dan hidronefrosis.",
+"Antibiotik tanpa bukti infeksi."
+],
+ti:0,
+ex:"Gejala obstruktif, residu 650 mL, hidronefrosis bilateral dan kenaikan kreatinin mendukung AKI pascarenal. Setelah dekompresi, awasi diuresis pascaobstruksi."
+},
+
+{
+name:"Penyakit ginjal diabetik",
+cat:"Nefrologi Khusus",
+age:56,sex:"Laki-laki",
+complaint:"Urine berbusa pada pasien diabetes",
+a:[
+["Durasi diabetes","Diabetes melitus tipe 2 selama 12 tahun."],
+["Perubahan urine","Urine berbusa beberapa bulan."],
+["Gejala penyerta","Edema tungkai ringan."],
+["Kontrol diabetes","HbA1c sebelumnya sering di atas target."]
+],
+p:[
+["Tekanan darah","148/90 mmHg."],
+["Edema","Edema ringan bilateral."],
+["Neurologis","Penurunan sensasi distal sesuai neuropati."],
+["Mata","Riwayat retinopati diabetik nonproliferatif."]
+],
+l:[
+["Kreatinin","1,6 mg/dL."],
+["eGFR","48 mL/menit/1,73 m²."],
+["ACR urine","560 mg/g, menetap pada pemeriksaan ulang."],
+["HbA1c","8,7%."],
+["Urinalisis","Albuminuria; tidak ada hematuria aktif."]
+],
+d:[
+"Penyakit ginjal diabetik",
+"Nefropati IgA",
+"Pielonefritis",
+"AKI prarenal"
+],
+di:0,
+t:[
+"Optimalkan kontrol glikemik dan tekanan darah, gunakan ACEi/ARB bila sesuai dan terapi protektif ginjal seperti SGLT2 inhibitor sesuai eGFR serta indikasi; pantau kreatinin, kalium dan ACR.",
+"Menghentikan kontrol glukosa karena kreatinin meningkat.",
+"NSAID rutin.",
+"Mengabaikan albuminuria."
+],
+ti:0,
+ex:"Diabetes lama, retinopati, albuminuria A3 menetap dan eGFR menurun mendukung penyakit ginjal diabetik. Terapi protektif ginjal dipertimbangkan sesuai indikasi dan kontraindikasi."
+},
+
+{
+name:"Nefritis interstisial akut akibat obat",
+cat:"Nefrologi Khusus",
+age:43,sex:"Perempuan",
+complaint:"Demam, ruam, dan kreatinin meningkat",
+a:[
+["Paparan obat","Memulai antibiotik beta-laktam 10 hari lalu."],
+["Awal keluhan","Demam dan ruam muncul setelah obat dimulai."],
+["Perubahan urine","Urine berkurang ringan."],
+["Obat lain","Mengonsumsi NSAID beberapa hari."]
+],
+p:[
+["Suhu","38°C."],
+["Kulit","Ruam makulopapular."],
+["Tekanan darah","122/78 mmHg."],
+["Edema","Tidak ada edema bermakna."]
+],
+l:[
+["Kreatinin","2,0 mg/dL dari dasar 0,8 mg/dL."],
+["Urinalisis","Piuria steril dan proteinuria ringan."],
+["Darah lengkap","Eosinofilia 7%; tidak selalu ditemukan."],
+["Sedimen","Leukosit; silinder leukosit dapat ditemukan."],
+["Kultur urine","Negatif."]
+],
+d:[
+"Nefritis interstisial akut akibat obat",
+"Nefropati IgA",
+"Sindrom nefrotik",
+"Nefrolitiasis"
+],
+di:0,
+t:[
+"Hentikan obat tersangka bila aman dan ganti sesuai kebutuhan, evaluasi penyebab AKI lain, pantau fungsi ginjal dan konsultasi nefrologi; biopsi atau steroid dipertimbangkan selektif.",
+"Melanjutkan obat tersangka tanpa evaluasi.",
+"Menambah antibiotik tanpa indikasi infeksi.",
+"Mengabaikan kenaikan kreatinin."
+],
+ti:0,
+ex:"Hubungan waktu obat baru, demam, ruam, AKI dan piuria steril menimbulkan kecurigaan acute interstitial nephritis. Trias klasik dan eosinofilia tidak selalu ada."
+},
+
+{
+name:"Penyakit ginjal polikistik autosomal dominan",
+cat:"Nefrologi Khusus",
+age:42,sex:"Laki-laki",
+complaint:"Nyeri pinggang berulang",
+a:[
+["Keluhan","Nyeri pinggang tumpul berulang."],
+["Gejala penyerta","Pernah hematuria makroskopik dan hipertensi."],
+["Riwayat keluarga","Ayah mengalami CKD dan dialisis pada usia 55 tahun."],
+["Riwayat pencitraan","Pernah diberitahu memiliki kista di kedua ginjal."]
+],
+p:[
+["Tekanan darah","156/94 mmHg."],
+["Abdomen","Ginjal teraba membesar bilateral."],
+["Edema","Tidak ada edema."],
+["Ekstrarenal","Evaluasi kista hati dan komplikasi ekstrarenal sesuai risiko."]
+],
+l:[
+["Kreatinin","1,7 mg/dL."],
+["eGFR","46 mL/menit/1,73 m²."],
+["Urinalisis","Hematuria mikroskopik."],
+["USG","Banyak kista bilateral; ukuran ginjal meningkat."],
+["Keluarga","Riwayat keluarga derajat pertama positif."]
+],
+d:[
+"Penyakit ginjal polikistik autosomal dominan",
+"Nefrolitiasis",
+"Pielonefritis",
+"Sindrom nefrotik"
+],
+di:0,
+t:[
+"Kontrol tekanan darah, pantau eGFR dan komplikasi, evaluasi riwayat keluarga serta ekstrarenal; pertimbangkan stratifikasi progresi dan terapi spesifik pada pasien terpilih.",
+"Antibiotik jangka panjang tanpa infeksi.",
+"Mengabaikan hipertensi.",
+"Menghentikan pemantauan fungsi ginjal."
+],
+ti:0,
+ex:"Riwayat keluarga derajat pertama, kista multipel bilateral dan pembesaran ginjal mendukung ADPKD. Kriteria pencitraan formal bergantung usia dan konteks keluarga."
+},
+
+{
+name:"Sindrom hepatorenal-AKI",
+cat:"Nefrologi Khusus",
+age:59,sex:"Laki-laki",
+complaint:"Asites dan urine berkurang",
+a:[
+["Penyakit hati","Sirosis dekompensata dengan asites."],
+["Perubahan urine","Oliguria sejak 2 hari."],
+["Gejala penyerta","Perut membesar dan edema tungkai."],
+["Pencetus","Skrining perdarahan, infeksi dan hipovolemia diperlukan."]
+],
+p:[
+["Tekanan darah","96/60 mmHg."],
+["Abdomen","Asites tegang."],
+["Kulit","Spider angioma dan ikterus."],
+["Status volume","Edema perifer; nilai volume intravaskular."]
+],
+l:[
+["Kreatinin","2,0 mg/dL dari dasar 0,9 mg/dL."],
+["Natrium","128 mmol/L."],
+["Urinalisis","Sedimen relatif bland; proteinuria tidak bermakna."],
+["USG ginjal","Tidak ada obstruksi."],
+["Evaluasi infeksi","Parasentesis diagnostik diperlukan untuk menyingkirkan SBP."]
+],
+d:[
+"Kemungkinan HRS-AKI pada sirosis",
+"AKI pascarenal",
+"Nefropati IgA",
+"Sindrom nefrotik"
+],
+di:0,
+t:[
+"Cari dan tangani pencetus atau penyebab alternatif seperti infeksi, perdarahan, hipovolemia dan nefrotoksin; evaluasi kriteria HRS-AKI bersama tim hepatologi-nefrologi.",
+"Diuretik tanpa evaluasi hemodinamik.",
+"Mengabaikan infeksi atau peritonitis bakterial spontan.",
+"Menganggap semua kenaikan kreatinin pada sirosis otomatis HRS."
+],
+ti:0,
+ex:"Sirosis dekompensata dengan asites dan AKI menimbulkan kecurigaan HRS-AKI, tetapi diagnosis tidak boleh ditegakkan sebelum menilai penyebab lain dan pencetus. Parasentesis diagnostik penting untuk menilai SBP."
+},
+
+{
+name:"Peritonitis terkait dialisis peritoneal",
+cat:"Nefrologi Khusus",
+age:51,sex:"Perempuan",
+complaint:"Nyeri perut dan cairan dialisis keruh",
+a:[
+["Perubahan cairan","Efluen dialisis tampak keruh sejak pagi."],
+["Gejala penyerta","Nyeri perut dan demam."],
+["Riwayat dialisis","Menjalani CAPD rutin."],
+["Riwayat episode","Belum pernah mengalami peritonitis."]
+],
+p:[
+["Suhu","38,2°C."],
+["Tekanan darah","118/76 mmHg."],
+["Abdomen","Nyeri tekan difus ringan."],
+["Kateter","Tidak ada pus jelas di exit-site; tetap evaluasi tunnel dan exit-site."]
+],
+l:[
+["Efluen dialisis","Leukosit 850 sel/µL setelah dwell 2 jam."],
+["Diferensial","PMN 82%."],
+["Kultur dialisat","Diambil sebelum antibiotik; hasil menunggu."],
+["Darah lengkap","Leukosit 13.500/µL."],
+["Kultur darah","Pertimbangkan bila ada tanda infeksi sistemik."]
+],
+d:[
+"Peritonitis terkait dialisis peritoneal",
+"Pielonefritis",
+"Nefrolitiasis",
+"Sindrom nefrotik"
+],
+di:0,
+t:[
+"Ambil sampel efluen untuk hitung sel, diferensial, Gram dan kultur; mulai antibiotik empiris intraperitoneal sesuai protokol lokal tanpa menunda, lalu sesuaikan hasil.",
+"Mengabaikan efluen keruh.",
+"Analgesik saja tanpa evaluasi infeksi.",
+"Menunggu kultur selesai sebelum memulai terapi bila kecurigaan klinis kuat."
+],
+ti:0,
+ex:"Efluen keruh, nyeri abdomen, leukosit efluen >100/µL setelah dwell minimal 2 jam dan PMN >50% mendukung peritonitis PD. Antibiotik empiris tidak ditunda setelah sampel diambil."
+}
+
+];
+
+// =====================================
+// STATE APLIKASI
+// =====================================
+
 let current = 0;
 let stage = 0;
 let answers = {};
 let shuffled = {};
+
+const categoryNames = [
+  "Glomerulus",
+  "Fungsi Ginjal",
+  "Elektrolit & Asam Basa",
+  "Saluran Kemih",
+  "Nefrologi Khusus"
+];
+
+// =====================================
+// PENGACAKAN PILIHAN
+// =====================================
 
 function shuffleWithKey(arr, correctIndex) {
   const items = arr.map((value, index) => ({
@@ -9,9 +1119,16 @@ function shuffleWithKey(arr, correctIndex) {
     correct: index === correctIndex
   }));
 
+  // Fisher-Yates shuffle
   for (let i = items.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [items[i], items[j]] = [items[j], items[i]];
+  }
+
+  // Pastikan jawaban benar tidak selalu di posisi pertama.
+  if (items.length > 1 && items[0].correct) {
+    const j = 1 + Math.floor(Math.random() * (items.length - 1));
+    [items[0], items[j]] = [items[j], items[0]];
   }
 
   return {
@@ -20,6 +1137,60 @@ function shuffleWithKey(arr, correctIndex) {
   };
 }
 
+// =====================================
+// NAVIGASI
+// =====================================
+
+function hideAll() {
+  ["home","caseList","simulation","result"].forEach(id => {
+    document.getElementById(id).classList.add("hidden");
+  });
+}
+
+function home() {
+  hideAll();
+  document.getElementById("home").classList.remove("hidden");
+}
+
+function buildCategories() {
+  document.getElementById("categories").innerHTML =
+    categoryNames.map(cat => `
+      <button class="card case" onclick="showCases('${cat}')">
+        <span class="tag">
+          ${cases.filter(c => c.cat === cat).length} KASUS
+        </span>
+        <h3>${cat}</h3>
+        <p>Lihat kasus dalam kategori ini.</p>
+      </button>
+    `).join("");
+}
+
+function showCases(cat = "") {
+  hideAll();
+
+  document.getElementById("caseList").classList.remove("hidden");
+
+  document.getElementById("listTitle").textContent =
+    cat ? "Kasus: " + cat : "Pilih kasus";
+
+  const list = cases
+    .map((c, i) => ({c, i}))
+    .filter(item => !cat || item.c.cat === cat);
+
+  document.getElementById("caseGrid").innerHTML =
+    list.map(({c, i}) => `
+      <button class="case" onclick="startCase(${i})">
+        <span class="tag">${c.cat}</span>
+        <h3>Kasus ${String(i + 1).padStart(2,"0")}</h3>
+        <p>${c.complaint}</p>
+      </button>
+    `).join("");
+}
+
+// =====================================
+// MEMULAI KASUS
+// =====================================
+
 function startCase(i) {
   current = i;
   stage = 0;
@@ -27,7 +1198,7 @@ function startCase(i) {
 
   const c = cases[i];
 
-  // Acak diagnosis dan terapi secara terpisah
+  // Diagnosis dan terapi diacak secara independen.
   shuffled = {
     dx: shuffleWithKey(c.d, c.di),
     tx: shuffleWithKey(c.t, c.ti)
@@ -36,16 +1207,49 @@ function startCase(i) {
   hideAll();
 
   document.getElementById("simulation").classList.remove("hidden");
-  document.getElementById("caseTag").textContent = "KASUS " + (i + 1);
-  document.getElementById("caseTitle").textContent = "Kasus " + (i + 1);
+
+  document.getElementById("caseTag").textContent =
+    "KASUS " + (i + 1);
+
+  document.getElementById("caseTitle").textContent =
+    "Kasus " + (i + 1);
 
   document.getElementById("patient").innerHTML = `
     <b>${c.sex}, ${c.age} tahun</b><br>
     Keluhan utama: ${c.complaint}
+    <br><small>
+      Data simulasi untuk pembelajaran, bukan pengganti penilaian klinis.
+    </small>
   `;
 
   render();
 }
+
+// =====================================
+// MENAMPILKAN DATA KLINIS
+// =====================================
+
+function dataRows(arr, prefix) {
+  return arr.map((item, i) => `
+    <div class="data">
+      <label>
+        <input
+          type="checkbox"
+          onchange="
+            document.getElementById('${prefix}${i}')
+            .classList.toggle('hidden', !this.checked)
+          "
+        >
+        <b>${item[0]}</b>
+      </label>
+      <p id="${prefix}${i}" class="hidden">${item[1]}</p>
+    </div>
+  `).join("");
+}
+
+// =====================================
+// MENAMPILKAN PILIHAN
+// =====================================
 
 function options(arr, key) {
   return arr.map((item, i) => `
@@ -57,10 +1261,16 @@ function options(arr, key) {
         ${answers[key] === i ? "checked" : ""}
         onchange="answers['${key}'] = Number(this.value)"
       >
-      <span>${String.fromCharCode(65 + i)}. ${item}</span>
+      <span>
+        ${String.fromCharCode(65 + i)}. ${item}
+      </span>
     </label>
   `).join("");
 }
+
+// =====================================
+// RENDER TAHAP SIMULASI
+// =====================================
 
 function render() {
   const c = cases[current];
@@ -72,6 +1282,9 @@ function render() {
 
   document.getElementById("nextBtn").textContent =
     stage === 4 ? "Selesaikan kasus" : "Lanjut →";
+
+  document.getElementById("progressBar").style.width =
+    ((stage + 1) / 5 * 100) + "%";
 
   if (stage === 0) {
     box.innerHTML = `
@@ -100,6 +1313,7 @@ function render() {
   if (stage === 3) {
     box.innerHTML = `
       <h3>Diagnosis paling mungkin</h3>
+      <p>Pilih satu jawaban.</p>
       ${options(shuffled.dx.items, "dx")}
     `;
   }
@@ -107,10 +1321,15 @@ function render() {
   if (stage === 4) {
     box.innerHTML = `
       <h3>Prinsip tata laksana</h3>
+      <p>Pilih pendekatan paling tepat berdasarkan kondisi pasien.</p>
       ${options(shuffled.tx.items, "tx")}
     `;
   }
 }
+
+// =====================================
+// PERPINDAHAN TAHAP
+// =====================================
 
 function setStage(n) {
   if (n > stage) {
@@ -146,6 +1365,10 @@ function previous() {
   }
 }
 
+// =====================================
+// HASIL DAN PENILAIAN
+// =====================================
+
 function finish() {
   if (answers.tx === undefined) {
     alert("Pilih tata laksana terlebih dahulu.");
@@ -154,30 +1377,62 @@ function finish() {
 
   const c = cases[current];
 
-  const dxCorrect = answers.dx === shuffled.dx.correct;
-  const txCorrect = answers.tx === shuffled.tx.correct;
+  const dxCorrect =
+    answers.dx === shuffled.dx.correct;
+
+  const txCorrect =
+    answers.tx === shuffled.tx.correct;
 
   hideAll();
+
   document.getElementById("result").classList.remove("hidden");
 
+  const finalScore =
+    (dxCorrect ? 50 : 0) +
+    (txCorrect ? 50 : 0);
+
   document.getElementById("score").textContent =
-    ((dxCorrect ? 50 : 0) + (txCorrect ? 50 : 0)) + "/100";
+    finalScore + "/100";
 
   document.getElementById("corrections").innerHTML = `
     <div class="review ${dxCorrect ? "good" : "bad"}">
       <h3>Diagnosis</h3>
-      <p>Jawaban kamu: ${shuffled.dx.items[answers.dx]}</p>
-      <p>Kunci: ${shuffled.dx.items[shuffled.dx.correct]}</p>
+      <p>
+        Jawaban kamu:
+        ${shuffled.dx.items[answers.dx]}
+      </p>
+      <p>
+        Kunci:
+        ${shuffled.dx.items[shuffled.dx.correct]}
+      </p>
       <b>${dxCorrect ? "Benar" : "Belum tepat"}</b>
     </div>
 
     <div class="review ${txCorrect ? "good" : "bad"}">
       <h3>Tata laksana</h3>
-      <p>Jawaban kamu: ${shuffled.tx.items[answers.tx]}</p>
-      <p>Kunci: ${shuffled.tx.items[shuffled.tx.correct]}</p>
+      <p>
+        Jawaban kamu:
+        ${shuffled.tx.items[answers.tx]}
+      </p>
+      <p>
+        Kunci:
+        ${shuffled.tx.items[shuffled.tx.correct]}
+      </p>
       <b>${txCorrect ? "Benar" : "Belum tepat"}</b>
     </div>
   `;
 
-  document.getElementById("discussion").textContent = c.ex;
+  document.getElementById("discussion").textContent =
+    c.ex;
 }
+
+// =====================================
+// INISIALISASI
+// =====================================
+
+buildCategories();
+home();
+
+</script>
+</body>
+</html>
