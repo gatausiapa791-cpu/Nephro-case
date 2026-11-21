@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEPHRO CASE - Clinical Simulator</title>
+<style>
+:root {
+  --navy:#24456b;
+  --blue:#719bc5;
+  --pink:#e99ab8;
+  --pink-dark:#c96f96;
+  --bg:#f5f7fc;
+  --text:#293b50;
+  --muted:#78899b;
+  --line:#e2e9f1;
+  --soft:#fff0f5;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  background:linear-gradient(110deg,var(--navy),var(--blue));
+  color:white;
+  padding:22px 6%;
+}
+.logo{font-size:24px;font-weight:800;letter-spacing:2px}
+.logo span{color:#ffc5d9}
+.container{max-width:1050px;margin:25px auto;padding:0 16px}
+.hero{
+  background:linear-gradient(120deg,var(--navy),var(--blue));
+  color:white;border-radius:20px;padding:30px;margin-bottom:22px;
+}
+.hero p{line-height:1.7;color:#e5eef8}
+.card{
+  background:white;border:1px solid var(--line);
+  border-radius:16px;padding:20px;margin-bottom:16px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+button{font:inherit;cursor:pointer}
+.btn{
+  border:0;border-radius:10px;padding:12px 17px;
+  font-weight:bold;
+}
+.primary{background:var(--pink);color:white}
+.secondary{background:#e8f0f8;color:var(--navy)}
+.case{
+  background:white;border:1px solid var(--line);
+  border-radius:13px;padding:17px;text-align:left;
+  color:var(--text);width:100%;
+}
+.case:hover{border-color:var(--pink)}
+.tag{
+  display:inline-block;background:var(--soft);
+  color:#a84e76;border-radius:20px;
+  padding:5px 10px;font-size:12px;
+}
+.hidden{display:none!important}
+.patient{
+  background:#edf5fc;padding:15px;
+  border-radius:12px;margin:15px 0;
+}
+.tabs{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+.tabs button{
+  border:0;border-radius:9px;padding:10px;
+  background:#eaf0f6;color:#526979;
+}
+.tabs button.active{background:var(--navy);color:white}
+.data-row{
+  border:1px solid var(--line);border-radius:12px;
+  padding:14px;margin:10px 0;
+}
+.data-row h4{margin:0 0 8px;color:var(--navy)}
+.data-row p{margin:0;line-height:1.7}
+.option{
+  display:flex;gap:10px;align-items:flex-start;
+  border:1px solid var(--line);border-radius:11px;
+  padding:13px;margin:9px 0;
+}
+.option input{margin-top:4px;accent-color:var(--pink-dark)}
+.actions{display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+.score{font-size:38px;font-weight:bold;color:var(--pink-dark)}
+.review{padding:14px;border:1px solid var(--line);border-radius:12px;margin:12px 0;line-height:1.6}
+.good{border-left:4px solid #4b9b83}
+.bad{border-left:4px solid #d47791}
+.notice{background:#edf5fc;padding:13px;border-radius:10px;line-height:1.6;font-size:13px}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:12px}
+@media(max-width:600px){
+  header{padding:18px}
+  .hero{padding:22px}
+  .container{margin:15px auto}
+  .tabs button{font-size:12px}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">NEPHRO <span>CASE</span></div>
+  <small>Clinical Case Simulation</small>
+</header>
+
+<main class="container">
+
+<section id="home">
+  <div class="hero">
+    <span class="tag">NEPHROLOGY LEARNING</span>
+    <h1>Berpikir seperti klinisi.</h1>
+    <p>
+      Pelajari kasus nefrologi melalui anamnesis,
+      pemeriksaan fisik, pemeriksaan penunjang,
+      diagnosis, dan tata laksana.
+    </p>
+    <button class="btn primary" onclick="showCases()">Mulai simulasi →</button>
+  </div>
+
+  <h2>Kategori kasus</h2>
+  <div class="grid" id="categoryGrid"></div>
+  <div class="notice">
+    Setiap data pasien merupakan skenario simulasi.
+    Nilai laboratorium dan keputusan klinis perlu
+    disesuaikan dengan konteks pasien.
+  </div>
+</section>
+
+<section id="caseList" class="hidden">
+  <button class="btn secondary" onclick="home()">← Kembali</button>
+  <h2>Pilih kasus</h2>
+  <p class="muted">Diagnosis tidak ditampilkan pada daftar kasus.</p>
+  <div class="grid" id="caseGrid"></div>
+</section>
+
+<section id="simulation" class="hidden">
+  <button class="btn secondary" onclick="showCases()">← Daftar kasus</button>
+
+  <div class="card">
+    <span class="tag" id="caseTag"></span>
+    <h2 id="caseTitle"></h2>
+    <div class="patient" id="patientInfo"></div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button onclick="setStage(0)">1. Anamnesis</button>
+      <button onclick="setStage(1)">2. Pemeriksaan fisik</button>
+      <button onclick="setStage(2)">3. Penunjang</button>
+      <button onclick="setStage(3)">4. Diagnosis</button>
+      <button onclick="setStage(4)">5. Tata laksana</button>
+    </div>
+
+    <div id="stageContent"></div>
+
+    <div class="actions">
+      <button class="btn secondary" onclick="previous()">← Sebelumnya</button>
+      <button class="btn primary" id="nextBtn" onclick="next()">Lanjut →</button>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="hidden">
+  <div class="card">
+    <span class="tag">HASIL SIMULASI</span>
+    <h2>Evaluasi kasus</h2>
+    <div class="score" id="score"></div>
+    <div id="corrections"></div>
+    <h3>Pembahasan klinis</h3>
+    <p id="discussion"></p>
+    <button class="btn primary" onclick="showCases()">Kasus berikutnya</button>
+  </div>
+</section>
+
+</main>
+
+<footer>NEPHRO CASE · Clinical Learning Simulator</footer>
+
+<script>
+
+/*
+FORMAT SETIAP KASUS:
+name       = diagnosis sebenarnya
+category   = kategori
+age/sex    = identitas pasien
+complaint  = keluhan utama
+anamnesis  = pertanyaan dan jawaban pasien
+physical   = pemeriksaan dan hasil objektif
+labs       = pemeriksaan penunjang dan hasil
+diagnosis  = pilihan diagnosis
+correctDx  = indeks diagnosis benar
+treatment  = pilihan tata laksana
+correctTx  = indeks tata laksana benar
+explanation= pembahasan
+*/
+
+const cases = [
+
+{
+name:"Glomerulonefritis akut pascastreptokokus",
+category:"Glomerulus",
+age:24,sex:"Laki-laki",
+complaint:"Wajah bengkak dan urine berwarna seperti teh",
+
+anamnesis:[
+["Sejak kapan keluhan muncul?","Pembengkakan wajah mulai sekitar 5 hari lalu."],
+["Bagaimana perubahan urine?","Urine lebih sedikit dan berwarna kecokelatan seperti teh."],
+["Apakah terdapat gejala penyerta?","Pasien mengeluhkan sakit kepala dan kedua tungkai mulai membengkak."],
+["Apakah ada riwayat infeksi sebelumnya?","Sekitar 2 minggu sebelumnya pasien mengalami nyeri tenggorokan."],
+["Obat apa yang sedang digunakan?","Pasien mengonsumsi obat penurun demam yang dibeli sendiri."],
+["Apakah ada riwayat penyakit keluarga?","Tidak ada riwayat penyakit ginjal dalam keluarga."]
+],
+
+physical:[
+["Tekanan darah","158/96 mmHg"],
+["Nadi","88 kali/menit"],
+["Edema","Edema periorbital dan pitting edema kedua tungkai"],
+["Jantung dan paru","Bunyi jantung reguler, paru tanpa ronki"],
+["Abdomen","Tidak ditemukan asites"],
+["Pemeriksaan kulit","Tidak ditemukan purpura"]
+],
+
+labs:[
+["Hemoglobin","13,2 g/dL"],
+["Ureum","68 mg/dL"],
+["Kreatinin","1,8 mg/dL"],
+["Kalium","5,0 mmol/L"],
+["Urinalisis","Protein 2+, darah 3+"],
+["Sedimen urine","Eritrosit dismorfik dan silinder eritrosit"],
+["Komplemen","C3 menurun"],
+["Pemeriksaan infeksi","ASO dapat meningkat"]
+],
+
+diagnosis:[
+"Glomerulonefritis akut pascastreptokokus",
+"Sindrom nefrotik",
+"Nefropati IgA",
+"Lupus nefritis"
+],
+correctDx:0,
+
+treatment:[
+"Pembatasan garam dan cairan sesuai status volume, pemantauan tekanan darah, diuresis, fungsi ginjal, dan elektrolit; terapi infeksi aktif bila terbukti.",
+"Memberikan imunosupresan tanpa memastikan etiologi.",
+"Memberikan antibiotik untuk semua pasien tanpa mengevaluasi infeksi aktif.",
+"Mengabaikan pemantauan tekanan darah dan fungsi ginjal."
+],
+correctTx:0,
+
+explanation:
+"Temuan edema, hipertensi, oliguria, hematuria glomerular, serta riwayat infeksi tenggorokan sebelumnya mendukung glomerulonefritis pascastreptokokus. Penurunan C3 dan bukti infeksi streptokokus sebelumnya dapat memperkuat dugaan. Penatalaksanaan terutama suportif dan pemantauan komplikasi."
+},
+
+{
+name:"Sindrom nefrotik",
+category:"Glomerulus",
+age:19,sex:"Perempuan",
+complaint:"Pembengkakan pada wajah dan kedua tungkai",
+
+anamnesis:[
+["Sejak kapan keluhan muncul?","Pembengkakan mulai dirasakan sekitar 2 minggu terakhir."],
+["Bagaimana perubahan urine?","Urine tampak berbusa lebih banyak dari biasanya."],
+["Apakah terdapat gejala penyerta?","Pasien merasa berat badan meningkat dan perut terasa membesar."],
+["Apakah ada riwayat penyakit sebelumnya?","Tidak pernah didiagnosis penyakit ginjal sebelumnya."],
+["Obat apa yang digunakan?","Tidak rutin mengonsumsi obat. Kadang menggunakan obat nyeri."],
+["Apakah ada riwayat keluarga?","Tidak ada riwayat penyakit ginjal dalam keluarga."]
+],
+
+physical:[
+["Tekanan darah","126/80 mmHg"],
+["Nadi","86 kali/menit"],
+["Edema","Pitting edema bilateral hingga tungkai"],
+["Jantung dan paru","Evaluasi efusi pleura dan kongesti"],
+["Abdomen","Asites dapat ditemukan"],
+["Kulit","Tidak ditemukan ruam khas"]
+],
+
+labs:[
+["Kreatinin","1,0 mg/dL"],
+["Albumin serum","2,0 g/dL"],
+["Protein urine","Proteinuria berat, perlu kuantifikasi"],
+["Kolesterol total","Meningkat"],
+["Urinalisis","Protein 4+"],
+["Sedimen urine","Evaluasi untuk hematuria atau sedimen aktif"],
+["Pemeriksaan tambahan","Evaluasi penyebab sekunder sesuai indikasi"]
+],
+
+diagnosis:[
+"Sindrom nefrotik",
+"Glomerulonefritis akut",
+"Pielonefritis",
+"Nefrolitiasis"
+],
+correctDx:0,
+
+treatment:[
+"Konfirmasi proteinuria dan hipoalbuminemia, evaluasi penyebab, komplikasi trombosis dan infeksi, kemudian terapi berdasarkan etiologi.",
+"Memberikan antibiotik tanpa bukti infeksi.",
+"Memberikan cairan dalam jumlah besar tanpa menilai status volume.",
+"Menghentikan seluruh evaluasi karena kreatinin masih normal."
+],
+correctTx:0,
+
+explanation:
+"Sindrom nefrotik ditandai proteinuria berat, hipoalbuminemia, edema, dan sering disertai hiperlipidemia. Kreatinin yang masih normal tidak menyingkirkan sindrom nefrotik."
+},
+
+{
+name:"Nefropati IgA",
+category:"Glomerulus",
+age:22,sex:"Laki-laki",
+complaint:"Urine kemerahan berulang",
+
+anamnesis:[
+["Sejak kapan keluhan muncul?","Urine kemerahan muncul sejak satu hari terakhir."],
+["Bagaimana perubahan urine?","Urine tampak merah kecokelatan."],
+["Apakah terdapat gejala penyerta?","Pasien mengalami batuk dan pilek beberapa hari terakhir."],
+["Apakah ada riwayat penyakit sebelumnya?","Keluhan serupa pernah terjadi setelah infeksi saluran napas."],
+["Obat apa yang digunakan?","Pasien mengonsumsi obat flu yang dijual bebas."],
+["Apakah ada riwayat keluarga?","Tidak diketahui adanya penyakit ginjal dalam keluarga."]
+],
+
+physical:[
+["Tekanan darah","132/84 mmHg"],
+["Nadi","82 kali/menit"],
+["Edema","Tidak ditemukan edema"],
+["Jantung dan paru","Tidak ditemukan kelainan bermakna"],
+["Abdomen","Dalam batas pemeriksaan klinis"],
+["Kulit","Tidak ditemukan purpura"]
+],
+
+labs:[
+["Kreatinin","1,1 mg/dL"],
+["Ureum","Normal atau sedikit meningkat sesuai kondisi"],
+["Urinalisis","Darah 3+, protein 1+"],
+["Sedimen urine","Eritrosit dismorfik"],
+["Protein urine","Perlu kuantifikasi ACR/PCR"],
+["Komplemen","C3 umumnya normal"],
+["Pemeriksaan tambahan","Biopsi ginjal sesuai indikasi"]
+],
+
+diagnosis:[
+"Nefropati IgA",
+"Glomerulonefritis pascastreptokokus",
+"Sindrom nefrotik",
+"Infeksi saluran kemih bawah"
+],
+correctDx:0,
+
+treatment:[
+"Kuantifikasi proteinuria, kendalikan tekanan darah dan faktor risiko, pantau eGFR, serta evaluasi nefrologi sesuai indikasi.",
+"Memberikan antibiotik tanpa bukti infeksi bakteri.",
+"Memberikan imunosupresan kepada seluruh pasien tanpa stratifikasi risiko.",
+"Mengabaikan pemantauan proteinuria."
+],
+correctTx:0,
+
+explanation:
+"Hematuria yang muncul bersamaan atau segera setelah infeksi saluran napas merupakan pola yang dapat ditemukan pada nefropati IgA. Diagnosis definitif memerlukan evaluasi yang sesuai, termasuk biopsi pada indikasi tertentu."
+},
+
+{
+name:"Lupus nefritis",
+category:"Glomerulus",
+age:26,sex:"Perempuan",
+complaint:"Edema, nyeri sendi, dan ruam kulit",
+
+anamnesis:[
+["Sejak kapan keluhan muncul?","Edema mulai dirasakan sejak sekitar 2 minggu."],
+["Bagaimana perubahan urine?","Urine tampak berbusa dan jumlahnya sedikit berkurang."],
+["Apakah terdapat gejala penyerta?","Pasien mengeluhkan nyeri sendi dan ruam setelah terpapar matahari."],
+["Apakah ada riwayat penyakit sebelumnya?","Pasien pernah mengalami keluhan nyeri sendi berulang."],
+["Obat apa yang digunakan?","Pasien menggunakan obat nyeri sesekali."],
+["Apakah ada riwayat keluarga?","Tidak diketahui riwayat penyakit autoimun dalam keluarga."]
+],
+
+physical:[
+["Tekanan darah","150/95 mmHg"],
+["Nadi","90 kali/menit"],
+["Edema","Edema pitting pada kedua tungkai"],
+["Jantung dan paru","Tidak ditemukan ronki; evaluasi serositis"],
+["Abdomen","Asites perlu dinilai"],
+["Kulit dan sendi","Ruam fotosensitif dan nyeri tekan sendi"]
+],
+
+labs:[
+["Hemoglobin","10,8 g/dL"],
+["Kreatinin","1,5 mg/dL"],
+["Urinalisis","Protein 3+, darah 2+"],
+["Protein urine","Kuantifikasi proteinuria diperlukan"],
+["ANA","Positif"],
+["Anti-dsDNA","Dapat meningkat"],
+["Komplemen","C3 dan C4 dapat menurun"]
+],
+
+diagnosis:[
+"Lupus nefritis",
+"Nefropati IgA",
+"Glomerulonefritis pascastreptokokus",
+"Penyakit ginjal diabetik"
+],
+correctDx:0,
+
+treatment:[
+"Evaluasi aktivitas lupus, proteinuria, fungsi ginjal, dan biopsi ginjal; terapi imunosupresif ditentukan berdasarkan kelas histopatologi serta kondisi pasien.",
+"Memberikan antibiotik sebagai terapi utama tanpa bukti infeksi.",
+"Memberikan diuretik saja tanpa mengevaluasi aktivitas lupus.",
+"Menghentikan seluruh pemantauan fungsi ginjal."
+],
+correctTx:0,
+
+explanation:
+"Manifestasi sistemik lupus disertai proteinuria, hematuria, penurunan fungsi ginjal, ANA positif, dan komplemen rendah meningkatkan kecurigaan lupus nefritis. Biopsi ginjal berperan penting dalam menentukan kelas dan pendekatan terapi."
+}
+
+];
+
+/* =====================================================
+   PERTANYAAN PEMERIKSAAN
+===================================================== */
+
+const categories=[
+"Glomerulus",
+"Fungsi Ginjal",
+"Elektrolit & Asam Basa",
+"Saluran Kemih",
+"Nefrologi Khusus"
+];
+
+let current=0;
+let stage=0;
+let answers={};
+
+function hideAll(){
+["home","caseList","simulation","result"].forEach(id=>{
+document.getElementById(id).classList.add("hidden");
+});
+}
+
+function home(){
+hideAll();
+document.getElementById("home").classList.remove("hidden");
+}
+
+function buildCategories(){
+document.getElementById("categoryGrid").innerHTML=
+categories.map((cat,i)=>`
+<div class="card">
+<span class="tag">KATEGORI ${i+1}</span>
+<h3>${cat}</h3>
+<p>${cases.filter(c=>c.category===cat).length} kasus tersedia</p>
+</div>`).join("");
+}
+
+function showCases(){
+hideAll();
+document.getElementById("caseList").classList.remove("hidden");
+
+document.getElementById("caseGrid").innerHTML=
+cases.map((c,i)=>`
+<button class="case" onclick="startCase(${i})">
+<span class="tag">${c.category}</span>
+<h3>Kasus ${String(i+1).padStart(2,"0")}</h3>
+<p>${c.complaint}</p>
+</button>`).join("");
+}
+
+function startCase(i){
+current=i;
+stage=0;
+answers={};
+const c=cases[i];
+
+hideAll();
+document.getElementById("simulation").classList.remove("hidden");
+
+document.getElementById("caseTag").textContent=
+"CASE "+String(i+1).padStart(2,"0");
+
+document.getElementById("caseTitle").textContent=
+"Kasus "+String(i+1).padStart(2,"0");
+
+document.getElementById("patientInfo").innerHTML=
+`<b>${c.sex}, ${c.age} tahun</b><br>
+Keluhan utama: ${c.complaint}`;
+
+render();
+}
+
+function renderData(items){
+return items.map(item=>`
+<div class="data-row">
+<h4>${item[0]}</h4>
+<p>${item[1]}</p>
+</div>`).join("");
+}
+
+function renderOptions(key,items){
+return items.map((item,i)=>`
+<label class="option">
+<input type="radio" name="${key}" value="${i}"
+${answers[key]===i?"checked":""}
+onchange="answers['${key}']=Number(this.value)">
+<span>${item}</span>
+</label>`).join("");
+}
+
+function render(){
+const c=cases[current];
+const box=document.getElementById("stageContent");
+
+document.querySelectorAll(".tabs button").forEach((b,i)=>{
+b.classList.toggle("active",i===stage);
+});
+
+document.getElementById("nextBtn").textContent=
+stage===4?"Selesaikan kasus":"Lanjut →";
+
+if(stage===0){
+box.innerHTML=`
+<h3>Anamnesis</h3>
+<p class="muted">Pilih pertanyaan untuk membuka jawaban pasien.</p>
+${c.anamnesis.map((item,i)=>`
+<div class="data-row">
+<label>
+<input type="checkbox" onchange="document.getElementById('anam${i}').classList.toggle('hidden',!this.checked)">
+<b>${item[0]}</b>
+</label>
+<p class="answer hidden" id="anam${i}">${item[1]}</p>
+</div>`).join("")}`;
+}
+
+if(stage===1){
+box.innerHTML=`
+<h3>Pemeriksaan fisik</h3>
+<p class="muted">Pilih pemeriksaan untuk melihat hasil objektif pasien.</p>
+${c.physical.map((item,i)=>`
+<div class="data-row">
+<label>
+<input type="checkbox" onchange="document.getElementById('phys${i}').classList.toggle('hidden',!this.checked)">
+<b>${item[0]}</b>
+</label>
+<p class="answer hidden" id="phys${i}">${item[1]}</p>
+</div>`).join("")}`;
+}
+
+if(stage===2){
+box.innerHTML=`
+<h3>Pemeriksaan penunjang</h3>
+<p class="muted">Pilih pemeriksaan untuk melihat hasilnya.</p>
+${c.labs.map((item,i)=>`
+<div class="data-row">
+<label>
+<input type="checkbox" onchange="document.getElementById('lab${i}').classList.toggle('hidden',!this.checked)">
+<b>${item[0]}</b>
+</label>
+<p class="answer hidden" id="lab${i}">${item[1]}</p>
+</div>`).join("")}`;
+}
+
+if(stage===3){
+box.innerHTML=`
+<h3>Diagnosis paling mungkin</h3>
+<p class="muted">Pilih satu diagnosis berdasarkan seluruh temuan.</p>
+${renderOptions("dx",c.diagnosis)}`;
+}
+
+if(stage===4){
+box.innerHTML=`
+<h3>Prinsip tata laksana</h3>
+<p class="muted">Pilih pendekatan yang paling sesuai dengan kasus.</p>
+${renderOptions("tx",c.treatment)}`;
+}
+}
+
+function setStage(n){
+stage=n;
+render();
+}
+
+function next(){
+if(stage<4){
+stage++;
+render();
+}else{
+finish();
+}
+}
+
+function previous(){
+if(stage>0){
+stage--;
+render();
+}else{
+showCases();
+}
+}
+
+function finish(){
+const c=cases[current];
+
+hideAll();
+document.getElementById("result").classList.remove("hidden");
+
+const dxCorrect=answers.dx===c.correctDx;
+const txCorrect=answers.tx===c.correctTx;
+
+const totalAnswered=
+["dx","tx"].filter(k=>answers[k]!==undefined).length;
+
+const score=Math.round(
+(dxCorrect?50:0)+
+(txCorrect?50:0)
+);
+
+document.getElementById("score").textContent=
+score+"/100";
+
+document.getElementById("corrections").innerHTML=`
+<div class="review ${dxCorrect?"good":"bad"}">
+<h3>Diagnosis</h3>
+<p><b>Jawaban kamu:</b>
+${answers.dx===undefined?"Belum dijawab":c.diagnosis[answers.dx]}</p>
+<p><b>Kunci jawaban:</b> ${c.diagnosis[c.correctDx]}</p>
+<p>${dxCorrect?"Jawaban benar.":"Jawaban belum tepat."}</p>
+</div>
+
+<div class="review ${txCorrect?"good":"bad"}">
+<h3>Tata laksana</h3>
+<p><b>Jawaban kamu:</b>
+${answers.tx===undefined?"Belum dijawab":c.treatment[answers.tx]}</p>
+<p><b>Kunci jawaban:</b> ${c.treatment[c.correctTx]}</p>
+<p>${txCorrect?"Jawaban benar.":"Jawaban belum tepat."}</p>
+</div>`;
+
+document.getElementById("discussion").textContent=
+c.explanation;
+}
+
+buildCategories();
+home();
+
+</script>
+</body>
+</html>
